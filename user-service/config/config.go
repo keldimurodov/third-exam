@@ -11,19 +11,14 @@ type Config struct {
 	Environment       string // develop, staging, production
 	PostgresHost      string
 	PostgresPort      int
-	PostgresDatasbase  string
+	PostgresDatabase  string
 	PostgresUser      string
 	PostgresPassword  string
 	LogLevel          string
 	RPCPort           string
 
-	// post service
-	PostServiceHost string
-	PostServicePort int
-
-	// comment service
-	CommentServiceHost string
-	CommentServicePort int
+	ProductServiceHost string
+	ProductServicePort int
 }
 
 // Load loads environment vars and inflates Config
@@ -34,21 +29,16 @@ func Load() Config {
 
 	c.PostgresHost = cast.ToString(getOrReturnDefault("POSTGRES_HOST", "localhost"))
 	c.PostgresPort = cast.ToInt(getOrReturnDefault("POSTGRES_PORT", 5432))
-	c.PostgresDatasbase = cast.ToString(getOrReturnDefault("POSTGRES_DATABASE", "exam"))
+	c.PostgresDatabase = cast.ToString(getOrReturnDefault("POSTGRES_DATABASE", "users"))
 	c.PostgresUser = cast.ToString(getOrReturnDefault("POSTGRES_USER", "postgres"))
 	c.PostgresPassword = cast.ToString(getOrReturnDefault("POSTGRES_PASSWORD", "123"))
 
-	// post service configuration
-	c.PostServiceHost = cast.ToString(getOrReturnDefault("POST_SERVICE_HOST","localhost"))
-	c.PostServicePort = cast.ToInt(getOrReturnDefault("POST_SERVICE_PORT", 9000))
-
-	// comment service configuration
-	c.CommentServiceHost = cast.ToString(getOrReturnDefault("COMMENT_SERVICE_HOST","localhost"))
-    c.CommentServicePort = cast.ToInt(getOrReturnDefault("COMMENT_SERVICE_PORT", 7000))
+	c.ProductServiceHost = cast.ToString(getOrReturnDefault("PRODUCT_SERVICE_HOST", "localhost"))
+	c.ProductServicePort = cast.ToInt(getOrReturnDefault("PRODUCT_SERVICE_PORT","8081"))
 
 	c.LogLevel = cast.ToString(getOrReturnDefault("LOG_LEVEL", "debug"))
 
-	c.RPCPort = cast.ToString(getOrReturnDefault("RPC_PORT", ":8000"))
+	c.RPCPort = cast.ToString(getOrReturnDefault("RPC_PORT", ":9000"))
 
 	return c
 }
@@ -61,4 +51,3 @@ func getOrReturnDefault(key string, defaultValue interface{}) interface{} {
 
 	return defaultValue
 }
-
