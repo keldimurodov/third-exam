@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package post;
+
+option go_package = "/post";
+
+service PostService {
+    rpc CreatePost(Post) returns (Post);
+    rpc GetPost(GetPostRequest) returns (Post);
+    rpc GetAllPosts(GetAllRequest) returns (GetAllResponse);
+    rpc UpdatePost(Post) returns (Post);
+    rpc DeletePost(GetDeletePostRequest) returns (Post);
+}
+
+message Post {
+    string id = 1;
+    string userID = 2;
+    string content = 3;
+    string title = 4;
+    int64 likes = 5;
+    int64 dislikes = 6;
+    int64 views = 7;
+    string categories = 8;
+    string created_at = 9;
+    string updeted_at = 10;
+    string deleted_at = 11;
+}
+
+message GetPostRequest {
+    string id = 1;
+}
+
+message GetAllRequest{
+    int64 page=1;
+    int64 limit=2;
+}
+
+message GetAllResponse{
+    repeated Post posts = 1;
+}
+
+message GetDeletePostRequest {
+    string id = 1;
+    string userID = 2;
+}

@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "/user";
+
+service UserService {
+  rpc Create(User) returns (User);
+  rpc Get(GetUserRequest) returns (User);
+  rpc GetAll(GetAllRequest) returns (GetAllResponse);
+  rpc Delete(GetUserRequest) returns (User);
+  rpc Update(User) returns (User);
+}
+
+message GetUserRequest {
+  string user_id = 1;
+}
+
+message GetAllRequest{
+  int64 page=1;
+  int64 limit=2;
+}
+
+message GetAllResponse{
+  repeated User users = 1 ;
+}
+
+
+message User {
+    string id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string username = 4;
+    string bio = 5;
+    string website = 6;
+    string email = 7;
+    string password = 8;
+    string created_at = 9;
+    string updeted_at = 10;
+    string deleted_at = 11;
+}
