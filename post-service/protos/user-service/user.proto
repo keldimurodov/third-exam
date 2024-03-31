@@ -5,11 +5,30 @@ package user;
 option go_package = "/user";
 
 service UserService {
-  rpc Create(User) returns (User);
-  rpc Get(GetUserRequest) returns (User);
-  rpc GetAll(GetAllRequest) returns (GetAllResponse);
-  rpc Delete(GetUserRequest) returns (User);
-  rpc Update(User) returns (User);
+  rpc CreateUser(User) returns (User);
+  rpc GetUser(GetUserRequest) returns (User);
+  rpc GetAllUsers(GetAllRequest) returns (GetAllResponse);
+  rpc DeleteUser(GetUserRequest) returns (User);
+  rpc UpdateUser(User) returns (User);
+  rpc CheckUniqueness(CheckUniquenessRequest) returns (CheckUniquenessResponse);
+  rpc Sign(UserDetail) returns (ResponseMessage);
+  rpc Verification(VerificationUserRequest) returns (User);
+  rpc Login(LoginRequest) returns (User);
+}
+
+
+message ResponseMessage {
+  string Content = 1;
+}
+
+message LoginRequest {
+  string Email = 1;
+  string Password = 2;
+}
+
+message VerificationUserRequest {
+  string Email = 1;
+  string Code = 2;
 }
 
 message GetUserRequest {
@@ -38,4 +57,23 @@ message User {
     string created_at = 9;
     string updeted_at = 10;
     string deleted_at = 11;
+}
+
+message UserDetail {
+	string FirstName = 1;
+	string LastName = 2;
+  string Username = 3;
+  string Bio = 4;
+  string Website = 5;
+	string Email = 6;
+	string Password = 7;
+}
+
+message CheckUniquenessRequest {
+  string field = 1;
+  string value = 2;
+}
+  
+message CheckUniquenessResponse {
+  bool result = 1;
 }

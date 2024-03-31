@@ -36,7 +36,7 @@ func (s *PostService) CreatePost(ctx context.Context, req *pb.Post) (*pb.Post, e
 }
 
 // Get implements PostService
-func (s *PostService) GetPost(ctx context.Context, req *pb.GetPostRequest) (*pb.Post, error) {
+func (s *PostService) GetPost(ctx context.Context, req *pb.GetPostRequest) (*pb.GetP, error) {
 
 	pro, err := s.storage.Post().GetPost(req)
 	if err != nil {

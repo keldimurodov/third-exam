@@ -101,7 +101,7 @@ func (r *postRepo) CreatePost(post *p.Post) (*p.Post, error) {
 	return &respUser, nil
 }
 
-func (r *postRepo) GetPost(pp *p.GetPostRequest) (*p.Post, error) {
+func (r *postRepo) GetPost(pp *p.GetPostRequest) (*p.GetP, error) {
 
 	updated_query := `
 	UPDATE 
@@ -139,10 +139,49 @@ func (r *postRepo) GetPost(pp *p.GetPostRequest) (*p.Post, error) {
 	)
 
 	if errr != nil {
-		log.Println("No such user found?")
+        return nil, errr
+    }
+
+	que := `SELECT 
+		id, 
+		owner_id, 
+		post_id, 
+		text, 
+        created_at, 
+        updeted_at 
+	FROM 
+		Comments 
+	WHERE 
+		post_id = $1`
+	rows, err := r.db.Query(que, pp.Id)
+	if err != nil {
+		// agar comment yo'q bo'lsa shunchaki nil qaytarvoradi faqat comment uchun
+		return &p.GetP{
+			Post:     &respUser,
+			Comments: nil,
+		}, nil
 	}
 
-	return &respUser, nil
+	var comments []*p.Comments
+
+	for rows.Next() {
+		var comment p.Comments
+
+		err := rows.Scan(&comment.Id, &comment.OwnerId, &comment.PostId, &comment.Text)
+		if err != nil {
+			// birorta commentni olishda muammo bo'lsa shunchaki bo'sh string qaytarvorishi uchun
+			log.Println("Commentlarni olishda muammo bo'ldi...")
+		}
+
+		comments = append(comments, &comment)
+	}
+
+	return &p.GetP{
+		Post:     &respUser,
+		Comments: comments,
+	}, nil
+
+	// return &respUser, nil
 }
 
 func (r *postRepo) GetAllPosts(pp *p.GetAllRequest) (*p.GetAllResponse, error) {
