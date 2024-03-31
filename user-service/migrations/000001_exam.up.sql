@@ -1,6 +1,3 @@
-CREATE DATABASE exam;
-\c exam
--- User service filds
 CREATE TABLE Users (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     first_name VARCHAR(100),
@@ -38,8 +35,3 @@ CREATE TABLE Comments (
     updeted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
 );
-
--- DROP Commands
-DROP TABLE Users;
-\c postgres
-DROP DATABASE auserdb;
