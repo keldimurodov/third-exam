@@ -28,18 +28,28 @@ func (r *commentRepo) CreateComment(comment *c.Comment) (*c.Comment, error) {
 			id, 
 			owner_id,
 			post_id, 
-			text, 
-			created_at, 
-        	updated_at) 
-		VALUES ($1, $2, $3, $4, $5, $6) 
+			text) 
+		VALUES ($1, $2, $3, $4) 
 		RETURNING 
 			id, 
 			owner_id,
 			post_id, 
 			text, 
 			created_at, 
-        	updated_at`
-	err := r.db.QueryRow(query, comment.Id, comment.OwnerId, comment.PostId, comment.Text, comment.CreatedAt, comment.UpdatedAt).Scan(
+        	updeted_at`
+	
+	j_query := `
+	    INSERT INTO PostComments(
+			comment_id
+		) VALUES ($1) `
+
+	eerr := r.db.QueryRow(j_query, comment.Id)
+
+	if eerr!= nil {
+        log.Println(eerr)
+    }
+
+	err := r.db.QueryRow(query, comment.Id, comment.OwnerId, comment.PostId, comment.Text).Scan(
 		&res.Id,
 		&res.OwnerId,
 		&res.PostId,
@@ -63,7 +73,7 @@ func (r *commentRepo) GetComment(cc *c.GetCommentRequest) (*c.Comment, error) {
 		post_id, 
 		text, 
 		created_at, 
-        updated_at
+        updeted_at
 	FROM 
 		Comments
 	WHERE
@@ -76,8 +86,7 @@ func (r *commentRepo) GetComment(cc *c.GetCommentRequest) (*c.Comment, error) {
 		&res.PostId,
 		&res.Text,
 		&res.CreatedAt,
-		&res.UpdatedAt,
-		&res.DeletedAt)
+		&res.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -94,9 +103,9 @@ func (r *commentRepo) GetAllComments(cc *c.GetAllCommentRequest) (*c.GetAllComme
 		post_id, 
 		text, 
 		created_at, 
-        updated_at
+        updeted_at
 	FROM 
-		post
+		Comments
 	WHERE 
 		deleted_at IS NULL
 	LIMIT $1
@@ -130,40 +139,40 @@ func (r *commentRepo) GetAllComments(cc *c.GetAllCommentRequest) (*c.GetAllComme
 	return &allComment, nil
 }
 
-func (r *commentRepo) UpdateComment(cc *c.Comment) (*c.Comment, error) {
+func (r *commentRepo) UpdateComment(cc *c.UpdateRequest) (*c.Comment, error) {
+	var res c.Comment
 	query := `
 	UPDATE
 		Comments
 	SET
-		text,
+		text = $1,
 		updeted_at = CURRENT_TIMESTAMP
 	WHERE
-		id = $1
-		and 
-		post_id = $2
+		id = $2
+	and
+		owner_id = $3
+	and
+		post_id = $4
 	RETURNING
 		id, 
 		owner_id,
 		post_id, 
 		text, 
-		created_at,
+		created_at, 
 		updeted_at`
 
-	var respComment c.Comment
-	err := r.db.QueryRow(query, cc.Text, cc.Id, cc.PostId).Scan(
-		&respComment.Id,
-		&respComment.OwnerId,
-		&respComment.PostId,
-		&respComment.Text,
-		&respComment.CreatedAt,
-		&respComment.UpdatedAt,
-	)
-
+	err := r.db.QueryRow(query,cc.Text, cc.Id, cc.OwnerId, cc.PostId).Scan(
+		&res.Id,
+		&res.OwnerId,
+		&res.PostId,
+		&res.Text,
+		&res.CreatedAt,
+		&res.UpdatedAt)
 	if err != nil {
-		log.Println("Error updating user in postgres")
 		return nil, err
 	}
-	return &respComment, nil
+
+	return &res, nil
 }
 
 func (r *commentRepo) DeleteComment(pr *c.GetDeleteCommentRequest) (*c.Comment, error) {
@@ -178,8 +187,8 @@ func (r *commentRepo) DeleteComment(pr *c.GetDeleteCommentRequest) (*c.Comment, 
 	WHERE
 		id=$1
 	and
-	    owner_id=$2
-	and 
+		owner_id=$2
+	and
 	    post_id=$3
 
 	RETURNING
@@ -188,7 +197,8 @@ func (r *commentRepo) DeleteComment(pr *c.GetDeleteCommentRequest) (*c.Comment, 
 		post_id, 
 		text, 
 		created_at,
-		updeted_at`
+		updeted_at,
+		deleted_at`
 
 	err := r.db.QueryRow(query, pr.Id, pr.OwnerId, pr.PostId).Scan(
 		&res.Id,

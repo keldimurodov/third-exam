@@ -58,7 +58,7 @@ func (s *CommentService) GetAllComment(ctx context.Context, req *c.GetAllComment
 }
 
 // Update implements product.ProductServiceServer.
-func (s *CommentService) UpdateComment(ctx context.Context, req *c.Comment) (*c.Comment, error) {
+func (s *CommentService) UpdateComment(ctx context.Context, req *c.UpdateRequest) (*c.Comment, error) {
 	pro, err := s.storage.Comment().UpdateComment(req)
 	if err != nil {
 		return nil, err
