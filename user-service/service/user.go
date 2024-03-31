@@ -31,24 +31,24 @@ func NewUserService(db *sqlx.DB, rdb *redis.Client, log l.Logger) *UserService {
 	}
 }
 
-func (s *UserService) Create(ctx context.Context, req *pbu.User) (*pbu.User, error) {
-	user, err := s.storage.User().Create(req)
+func (s *UserService) CreateUser(ctx context.Context, req *pbu.User) (*pbu.User, error) {
+	user, err := s.storage.User().CreateUser(req)
 	if err != nil {
 		return nil, err
 	}
 	return user, nil
 }
 
-func (s *UserService) Get(ctx context.Context, req *pbu.GetUserRequest) (*pbu.User, error) {
-	user, err := s.storage.User().Get(req)
+func (s *UserService) GetUser(ctx context.Context, req *pbu.GetUserRequest) (*pbu.User, error) {
+	user, err := s.storage.User().GetUser(req)
 	if err != nil {
 		return nil, err
 	}
 	return user, nil
 }
 
-func (s *UserService) Update(ctx context.Context, req *pbu.User) (*pbu.User, error) {
-	user, err := s.storage.User().Update(req)
+func (s *UserService) UpdateUser(ctx context.Context, req *pbu.User) (*pbu.User, error) {
+	user, err := s.storage.User().UpdateUser(req)
 	if err != nil {
 		return nil, err
 	}
@@ -56,16 +56,16 @@ func (s *UserService) Update(ctx context.Context, req *pbu.User) (*pbu.User, err
 	return user, nil
 }
 
-func (s *UserService) Delete(ctx context.Context, req *pbu.GetUserRequest) (*pbu.User, error) {
-	user, err := s.storage.User().Delete(req)
+func (s *UserService) DeleteUser(ctx context.Context, req *pbu.GetUserRequest) (*pbu.User, error) {
+	user, err := s.storage.User().DeleteUser(req)
 	if err != nil {
 		return nil, err
 	}
 	return user, nil
 }
 
-func (s *UserService) GetAll(ctx context.Context, req *pbu.GetAllRequest) (*pbu.GetAllResponse, error) {
-	users, err := s.storage.User().GetAll(req)
+func (s *UserService) GetAllUsers(ctx context.Context, req *pbu.GetAllRequest) (*pbu.GetAllResponse, error) {
+	users, err := s.storage.User().GetAllUsers(req)
 	if err != nil {
 		return nil, err
 	}

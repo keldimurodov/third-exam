@@ -1,16 +1,16 @@
 package repo
 
 import (
-	pbu "third-exam/user-service/genproto/user"
+	u "third-exam/user-service/genproto/user"
 )
 
 // UserStorageI ...
 type UserStoragePostgresI interface {
-	Create(*pbu.User) (*pbu.User, error)
-	Get(user *pbu.GetUserRequest) (*pbu.User, error)
-	GetAll(req *pbu.GetAllRequest) (*pbu.GetAllResponse, error)
-	Delete(user *pbu.GetUserRequest) (*pbu.User, error)
-	Update(user *pbu.User) (*pbu.User, error)
-	CheckUniqueness(req *pbu.CheckUniquenessRequest) (*pbu.CheckUniquenessResponse, error)
-	Login(req *pbu.LoginRequest) (*pbu.User, error)
+	CreateUser(*u.User) (*u.User, error)
+	GetUser(user *u.GetUserRequest) (*u.User, error)
+	GetAllUsers(req *u.GetAllRequest) (*u.GetAllResponse, error)
+	DeleteUser(user *u.GetUserRequest) (*u.User, error)
+	UpdateUser(user *u.User) (*u.User, error)
+	CheckUniqueness(req *u.CheckUniquenessRequest) (*u.CheckUniquenessResponse, error)
+	Login(req *u.LoginRequest) (*u.User, error)
 }
