@@ -7,15 +7,3 @@ proto-gen:
 
 run:
 	go run cmd/main.go
-
-migrate-up:
-	migrate -path migrations -database "postgresql://postgres:123@localhost:5432/exam?sslmode=disable" -verbose up
-
-migrate-down:
-	migrate -path migrations -database "postgres://postgres:123@localhost:5432/exam?sslmode=disable" -verbose down
-
-migrate-file:
-	migrate create -ext sql -dir migrations/ -seq exam
-
-migrate-dirty:
-	migrate -path ./migrations/ -database "postgresql://postgres:123@localhost:5432/exam?sslmode=disable" force 1
