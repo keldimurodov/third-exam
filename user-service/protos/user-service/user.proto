@@ -16,21 +16,23 @@ service UserService {
   rpc Login(LoginRequest) returns (User);
 }
 
-message GetUserRequest {
-  string user_id = 1;
-}
+
 message ResponseMessage {
-    string Content = 1;
+  string Content = 1;
 }
 
 message LoginRequest {
-    string Email = 1;
-    string Password = 2;
+  string Email = 1;
+  string Password = 2;
 }
 
 message VerificationUserRequest {
-    string Email = 1;
-    string Code = 2;
+  string Email = 1;
+  string Code = 2;
+}
+
+message GetUserRequest {
+  string user_id = 1;
 }
 
 message GetAllRequest{
@@ -60,18 +62,18 @@ message User {
 message UserDetail {
 	string FirstName = 1;
 	string LastName = 2;
-    string Username = 3;
-    string Bio = 4;
-    string Website = 5;
+  string Username = 3;
+  string Bio = 4;
+  string Website = 5;
 	string Email = 6;
 	string Password = 7;
 }
 
 message CheckUniquenessRequest {
-    string field = 1;
-    string value = 2;
-  }
+  string field = 1;
+  string value = 2;
+}
   
-  message CheckUniquenessResponse {
-    bool result = 1;
-  }
+message CheckUniquenessResponse {
+  bool result = 1;
+}

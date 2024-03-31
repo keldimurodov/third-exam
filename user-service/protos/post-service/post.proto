@@ -6,10 +6,20 @@ option go_package = "/post";
 
 service PostService {
     rpc CreatePost(Post) returns (Post);
-    rpc GetPost(GetPostRequest) returns (Post);
+    rpc GetPost(GetPostRequest) returns (GetP);
     rpc GetAllPosts(GetAllRequest) returns (GetAllResponse);
     rpc UpdatePost(Post) returns (Post);
     rpc DeletePost(GetDeletePostRequest) returns (Post);
+}
+
+message Comments{
+    string id = 1;
+    string owner_id = 2;
+    string post_id = 3;
+    string text = 4;
+    string created_at = 6;
+    string updated_at = 7;
+    string deleted_at = 8;
 }
 
 message Post {
@@ -24,6 +34,12 @@ message Post {
     string created_at = 9;
     string updeted_at = 10;
     string deleted_at = 11;
+    repeated Comments comments = 12;
+}
+
+message GetP{
+    Post post = 1;
+    repeated Comments comments = 2;
 }
 
 message GetPostRequest {
