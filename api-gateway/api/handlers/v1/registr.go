@@ -3,10 +3,10 @@ package v1
 import (
 	"context"
 	"fmt"
-	"go-exam/api-gateway/api/handlers/models"
-	pbu "go-exam/api-gateway/genproto/user"
-	l "go-exam/api-gateway/pkg/logger"
 	"net/http"
+	"third-exam/api-gateway/api/handlers/models"
+	pbu "third-exam/api-gateway/genproto/user"
+	l "third-exam/api-gateway/pkg/logger"
 	"time"
 
 	"github.com/gin-gonic/gin"

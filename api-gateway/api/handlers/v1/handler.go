@@ -1,12 +1,12 @@
 package v1
 
 import (
-	models "go-exam/api-gateway/api/handlers/models"
-	tokens "go-exam/api-gateway/api/handlers/tokens"
-	"go-exam/api-gateway/config"
-	"go-exam/api-gateway/pkg/logger"
-	"go-exam/api-gateway/services"
 	"net/http"
+	models "third-exam/api-gateway/api/handlers/models"
+	tokens "third-exam/api-gateway/api/handlers/tokens"
+	"third-exam/api-gateway/config"
+	"third-exam/api-gateway/pkg/logger"
+	"third-exam/api-gateway/services"
 
 	"github.com/gin-gonic/gin"
 )

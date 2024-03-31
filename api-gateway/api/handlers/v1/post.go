@@ -2,7 +2,7 @@ package v1
 
 import (
 	"context"
-	"fmt"
+	// "fmt"
 	"net/http"
 	"time"
 
@@ -10,26 +10,27 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 
 	models "third-exam/api-gateway/api/handlers/models"
-	u "third-exam/api-gateway/genproto/user"
+	// "third-exam/api-gateway/api/handlers/tokens"
+	p "third-exam/api-gateway/genproto/post"
 	l "third-exam/api-gateway/pkg/logger"
 	"third-exam/api-gateway/pkg/utils"
 )
 
-// CreateUser ...
-// @Summary CreateUser
+// CreatePost ...
+// @Summary CreatePost ...
 // @Security ApiKeyAuth
-// @Description Api for creating a new user
-// @Tags user
+// @Description Api for creating a new post
+// @Tags product
 // @Accept json
 // @Produce json
-// @Param User body models.User true "createUserModel"
-// @Success 200 {object} models.User
+// @Param Product body models.Post true "createPost"
+// @Success 200 {object} models.Post created successfully
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/users/ [post]
-func (h *handlerV1) CreateUser(c *gin.Context) {
+// @Router /v1/create/ [post]
+func (h *handlerV1) CreatePost(c *gin.Context) {
 	var (
-		body        models.User
+		body        models.Post
 		jspbMarshal protojson.MarshalOptions
 	)
 	jspbMarshal.UseProtoNames = true
@@ -39,51 +40,74 @@ func (h *handlerV1) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
-		h.log.Error("failed to bind json", l.Error(err))
+		h.log.Error("Failed bind json", l.Error(err))
 		return
 	}
-
-	fmt.Println(body)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeout))
 	defer cancel()
 
-	response, err := h.serviceManager.UserService().CreateUser(ctx, &u.User{
-		FirstName: body.Name,
-		LastName:  body.LastName,
-		Username:  body.Username,
-		Bio:       body.Bio,
-		Website:   body.Website,
-		Email:     body.Email,
-		Password:  body.Password,
-		CreatedAt: body.CreatedAt,
-		UpdetedAt: body.UpdetedAt,
-		DeletedAt: body.DeletedAt,
+	// h.jwthandler = tokens.JWTHandler{
+	// 	Sub:       body.,
+	// 	Role:      "admin",
+	// 	SigninKey: "admin",
+	// 	Log:       h.log,
+	// }
+
+	// access, refresh, err := h.jwthandler.GenerateAuthJWT()
+	// if err != nil {
+	// 	c.JSON(http.StatusConflict, gin.H{
+	// 		"error": "error while generating jwt",
+	// 	})
+	// 	h.log.Error("error generate new jwt tokens", l.Error(err))
+	// 	return
+	// }
+	// fmt.Println("Tokens are working well")
+
+	response, err := h.serviceManager.PostService().CreatePost(ctx, &p.Post{
+		Id: body.Id,
+		UserID: body.UserID,
+		Content: body.Content,
+        Title: body.Title,
+        Likes: body.Likes,
+        Dislikes: body.Dislikes,
+        Views: body.Views,
 	})
+
+	respBody := &models.Post{
+		Id:           response.Id,
+		UserID: response.UserID,
+		Content: response.Content,
+        Title: response.Title,
+        Likes: response.Likes,
+        Dislikes: response.Dislikes,
+        Views: response.Views,
+	}
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
-		h.log.Error("Failed to create user", l.Error(err))
+		h.log.Error("Failed to Create Post", l.Error(err))
 		return
 	}
 
-	c.JSON(http.StatusCreated, response)
+	c.JSON(http.StatusCreated, respBody)
 }
 
-// GetUser gets user by id
-// @Summary GetUser
+// GetPost get post by id
+// @Summary GetPost
 // @Security ApiKeyAuth
-// @Description Api for getting user by id
-// @Tags user
+// @Description Api for getting post by id
+// @Tags post
 // @Accept json
 // @Produce json
-// @Param id path string true "ID"
-// @Success 200 {object} models.User
+// @Param id path string true "id"
+// @Success 200 {object} models.Post
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/users/{id} [get]
-func (h *handlerV1) GetUser(c *gin.Context) {
+// @Router /v1/get/{id} [get]
+func (h *handlerV1) GetPost(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
 
@@ -92,35 +116,35 @@ func (h *handlerV1) GetUser(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeout))
 	defer cancel()
 
-	response, err := h.serviceManager.UserService().GetUser(
-		ctx, &u.GetUserRequest{
-			UserId: id,
+	response, err := h.serviceManager.PostService().GetPost(
+		ctx, &p.GetPostRequest{
+			Id: id,
 		})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
-		h.log.Error("Failed to get user", l.Error(err))
+		h.log.Error("Failed to GET Post", l.Error(err))
 		return
 	}
 
 	c.JSON(http.StatusOK, response)
 }
 
-// GetAllUsers returns list of users
-// @Summary GetAllUser
+// GetAllPosts returns list of posts from the service
+// @Summary All posts
 // @Security ApiKeyAuth
-// @Description Api returns list of users
-// @Tags user
+// @Description Api returns list of posts
+// @Tags post
 // @Accept json
 // @Produce json
 // @Param page path int64 true "Page"
 // @Param limit path int64 true "Limit"
-// @Succes 200 {object} models.User
+// @Succes 200 {object} models.Post
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/users/ [get]
-func (h *handlerV1) GetALlUsers(c *gin.Context) {
+// @Router /v1/all/ [get]
+func (h *handlerV1) GetAllPosts(c *gin.Context) {
 	queryParams := c.Request.URL.Query()
 
 	params, errStr := utils.ParseQueryParams(queryParams)
@@ -138,8 +162,8 @@ func (h *handlerV1) GetALlUsers(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeout))
 	defer cancel()
 
-	response, err := h.serviceManager.UserService().GetAllUsers(
-		ctx, &u.GetAllRequest{
+	response, err := h.serviceManager.PostService().GetAllPosts(
+		ctx, &p.GetAllRequest{
 			Limit: params.Limit,
 			Page:  params.Page,
 		})
@@ -147,27 +171,28 @@ func (h *handlerV1) GetALlUsers(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
-		h.log.Error("Failed to list users", l.Error(err))
+		h.log.Error("Failed to list post", l.Error(err))
 		return
 	}
 
 	c.JSON(http.StatusOK, response)
 }
 
-// UpdateUser updates user by id
-// @Summary UpdateUser
+// UpdatePost updates post by id
+// @Summary UpdatePost
 // @Security ApiKeyAuth
-// @Description Api returns updates user
-// @Tags user
+// @Description Api returns updates post
+// @Tags post
 // @Accept json
 // @Produce json
-// @Succes 200 {Object} models.User
+// @Param Product body models.Post true "UpdatePost"
+// @Succes 200 {Object} models.Post
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/users/{id} [put]
-func (h *handlerV1) UpdateUser(c *gin.Context) {
+// @Router /v1/update/{id} [put]
+func (h *handlerV1) UpdatePost(c *gin.Context) {
 	var (
-		body        u.User
+		body        models.Comments
 		jspbMarshal protojson.MarshalOptions
 	)
 	jspbMarshal.UseProtoNames = true
@@ -185,46 +210,49 @@ func (h *handlerV1) UpdateUser(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeout))
 	defer cancel()
 
-	response, err := h.serviceManager.UserService().UpdateUser(ctx, &body)
+	response, err := h.serviceManager.PostService().UpdatePost(ctx, &p.Post{
+	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
-		h.log.Error("Failed to update user", l.Error(err))
+		h.log.Error("Failed to update post", l.Error(err))
 		return
 	}
 
 	c.JSON(http.StatusOK, response)
 }
 
-// DeleteUser deleted user by id
-// @Summary DeleteUser
+// DeletePost deleted Post by id
+// @Summary Delete Post
 // @Security ApiKeyAuth
-// @Description Api deleted user
-// @Tags user
+// @Description Api deletes post
+// @Tags post
 // @Accept json
 // @Produce json
-// @Succes 200 {Object} models.User
+// @Param id path string true "id"
+// @Succes 200 {Object} model.Post
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/users/{id} [delete]
-func (h *handlerV1) DeleteUser(c *gin.Context) {
+// @Router /v1/delete/{id} [delete]
+func (h *handlerV1) DeletePost(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
 
 	guid := c.Param("id")
+
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeout))
 	defer cancel()
 
-	response, err := h.serviceManager.UserService().DeleteUser(
-		ctx, &u.GetUserRequest{
-			UserId: guid,
+	response, err := h.serviceManager.PostService().DeletePost(
+		ctx, &p.GetDeletePostRequest{
+			Id: guid,
 		})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
-		h.log.Error("Failed to delete user", l.Error(err))
+		h.log.Error("Failed to delete post", l.Error(err))
 		return
 	}
 

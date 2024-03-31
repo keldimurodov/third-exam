@@ -7,8 +7,8 @@ import (
 	"log"
 	"net/http"
 
-	jWT "go-exam/api-gateway/api/handlers/tokens"
-	"go-exam/api-gateway/config"
+	jWT "third-exam/api-gateway/api/handlers/tokens"
+	"third-exam/api-gateway/config"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/dgrijalva/jwt-go"
@@ -78,13 +78,13 @@ func (a *JWTRoleAuth) GetRole(r *http.Request) (string, error) {
 	)
 
 	jwtToken := r.Header.Get("Authorization")
-	
+
 	if jwtToken == "" {
 		return "unauthorized", nil
 	}
 
 	a.jwtHandler.Token = jwtToken
-	
+
 	claims, err = a.jwtHandler.ExtractClaims()
 	if err != nil {
 		log.Println("error chack token", err)

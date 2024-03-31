@@ -2,9 +2,9 @@ package tokens
 
 import (
 	// "api-gateway/pkg/logger"
-	"go-exam/api-gateway/config"
-	"go-exam/api-gateway/pkg/logger"
 	"log"
+	"third-exam/api-gateway/config"
+	"third-exam/api-gateway/pkg/logger"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"

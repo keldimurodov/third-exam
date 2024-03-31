@@ -2,35 +2,33 @@ package v1
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/protobuf/encoding/protojson"
 
-	models "go-exam/api-gateway/api/handlers/models"
-	"go-exam/api-gateway/api/handlers/tokens"
-	pbp "go-exam/api-gateway/genproto/product"
-	l "go-exam/api-gateway/pkg/logger"
-	"go-exam/api-gateway/pkg/utils"
+	models "third-exam/api-gateway/api/handlers/models"
+	cc "third-exam/api-gateway/genproto/comment"
+	l "third-exam/api-gateway/pkg/logger"
+	"third-exam/api-gateway/pkg/utils"
 )
 
-// CreateProduct ...
-// @Summary CreateProduct ...
+// CreateComment ...
+// @Summary CreateComment ...
 // @Security ApiKeyAuth
-// @Description Api for creating a new product
-// @Tags product
+// @Description Api for creating a new comment
+// @Tags comment
 // @Accept json
 // @Produce json
-// @Param Product body models.Product true "createProduct"
-// @Success 200 {object} models.Product
+// @Param Product body models.Comment true "createComment"
+// @Success 200 {object} models.Comment created successfully
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
 // @Router /v1/create/ [post]
-func (h *handlerV1) Create(c *gin.Context) {
+func (h *handlerV1) CreateComment(c *gin.Context) {
 	var (
-		body        models.Product
+		body        models.Comments
 		jspbMarshal protojson.MarshalOptions
 	)
 	jspbMarshal.UseProtoNames = true
@@ -40,71 +38,57 @@ func (h *handlerV1) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
-		h.log.Error("failed to bind json", l.Error(err))
+		h.log.Error("Failed bind json", l.Error(err))
 		return
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeout))
 	defer cancel()
 
-	h.jwthandler = tokens.JWTHandler{
-		Sub:       body.ProductName,
-		Role:      "admin",
-		SigninKey: "admin",
-		Log:       h.log,
-	}
-
-	access, refresh, err := h.jwthandler.GenerateAuthJWT()
-	if err != nil {
-		c.JSON(http.StatusConflict, gin.H{
-			"error": "error while generating jwt",
-		})
-		h.log.Error("error generate new jwt tokens", l.Error(err))
-		return
-	}
-	fmt.Println("Tokens are working well")
-
-	response, err := h.serviceManager.ProductService().Create(ctx, &pbp.Product{
-		ProductName:  body.ProductName,
-		ProductPrice: body.ProductPrice,
-		ProductAbout: body.ProductAbout,
-		RefreshToken: refresh,
+	response, err := h.serviceManager.CommentService().CreateComment(ctx, &cc.Comment{
+		Id:        body.Id,
+        OwnerId:   body.OwnerId,
+        PostId:    body.PostId,
+        Text:      body.Text,
+        CreatedAt: body.CreatedAt,
+        UpdatedAt: body.UpdatedAt,
+        DeletedAt: body.DeletedAt,
 	})
 
-	respBody := &models.CreateProductResponse{
-		Id:           response.Id,
-		ProductName:  response.ProductName,
-		ProductPrice: response.ProductPrice,
-		ProductAbout: response.ProductAbout,
-		CreatedAt:    response.CreatedAt,
-		RefreshToken: response.RefreshToken,
-		AccesToken:   access,
+	respBody := &models.Comments{
+		Id:        response.Id,
+        OwnerId:   response.OwnerId,
+        PostId:    response.PostId,
+        Text:      response.Text,
+        CreatedAt: response.CreatedAt,
+        UpdatedAt: response.UpdatedAt,
+        DeletedAt: response.DeletedAt,
 	}
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
-		h.log.Error("failed to create user", l.Error(err))
+		h.log.Error("Failed to Create Comment", l.Error(err))
 		return
 	}
 
 	c.JSON(http.StatusCreated, respBody)
 }
 
-// Get get product by id
-// @Summary GetProduct
+// GetComment get comment by id
+// @Summary GetComment
 // @Security ApiKeyAuth
-// @Description Api for getting product by id
-// @Tags product
+// @Description Api for getting comment by id
+// @Tags comment
 // @Accept json
 // @Produce json
 // @Param id path string true "id"
-// @Success 200 {object} models.Product
+// @Success 200 {object} models.Comments
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
 // @Router /v1/get/{id} [get]
-func (h *handlerV1) Get(c *gin.Context) {
+func (h *handlerV1) GetComment(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
 
@@ -113,35 +97,35 @@ func (h *handlerV1) Get(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeout))
 	defer cancel()
 
-	response, err := h.serviceManager.ProductService().Get(
-		ctx, &pbp.GetRequest{
+	response, err := h.serviceManager.CommentService().GetComment(
+		ctx, &cc.GetCommentRequest{
 			Id: id,
 		})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
-		h.log.Error("failed to get user", l.Error(err))
+		h.log.Error("Failed to GET Comment", l.Error(err))
 		return
 	}
 
 	c.JSON(http.StatusOK, response)
 }
 
-// ListProduct returns list of products
-// @Summary All products
+// GetAllComments returns list of comments from the service
+// @Summary All comments from the service
 // @Security ApiKeyAuth
-// @Description Api returns list of products
-// @Tags product
+// @Description Api returns list of comments from
+// @Tags commment
 // @Accept json
 // @Produce json
 // @Param page path int64 true "Page"
 // @Param limit path int64 true "Limit"
-// @Succes 200 {object} models.Product
+// @Succes 200 {object} models.Comments
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
 // @Router /v1/all/ [get]
-func (h *handlerV1) GetAll(c *gin.Context) {
+func (h *handlerV1) GetAllComments(c *gin.Context) {
 	queryParams := c.Request.URL.Query()
 
 	params, errStr := utils.ParseQueryParams(queryParams)
@@ -149,7 +133,7 @@ func (h *handlerV1) GetAll(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": errStr[0],
 		})
-		h.log.Error("failed to parse query params json" + errStr[0])
+		h.log.Error("Failed to parse query params json" + errStr[0])
 		return
 	}
 
@@ -159,8 +143,8 @@ func (h *handlerV1) GetAll(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeout))
 	defer cancel()
 
-	response, err := h.serviceManager.ProductService().GetAll(
-		ctx, &pbp.GetAllRequest{
+	response, err := h.serviceManager.CommentService().GetAllComment(
+		ctx, &cc.GetAllCommentRequest{
 			Limit: params.Limit,
 			Page:  params.Page,
 		})
@@ -168,28 +152,28 @@ func (h *handlerV1) GetAll(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
-		h.log.Error("failed to list products", l.Error(err))
+		h.log.Error("Failed to list Commments", l.Error(err))
 		return
 	}
 
 	c.JSON(http.StatusOK, response)
 }
 
-// UpdateProduct updates product by id
-// @Summary UpdateProduct
+// UpdateComment updates Comment by id
+// @Summary Update Commment
 // @Security ApiKeyAuth
-// @Description Api returns updates user
-// @Tags product
+// @Description Api returns updates comment
+// @Tags comment
 // @Accept json
 // @Produce json
-// @Param Product body models.Product true "UpdateProduct"
-// @Succes 200 {Object} models.Product
+// @Param Product body models.Comment true "UpdatePost"
+// @Succes 200 {Object} models.Comments
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
 // @Router /v1/update/{id} [put]
-func (h *handlerV1) Update(c *gin.Context) {
+func (h *handlerV1) UpdateComment(c *gin.Context) {
 	var (
-		body        pbp.Product
+		body        models.Comments
 		jspbMarshal protojson.MarshalOptions
 	)
 	jspbMarshal.UseProtoNames = true
@@ -199,7 +183,7 @@ func (h *handlerV1) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
-		h.log.Error("failed to bind json", l.Error(err))
+		h.log.Error("Failed to bind json", l.Error(err))
 		return
 	}
 	body.Id = c.Param("id")
@@ -207,39 +191,36 @@ func (h *handlerV1) Update(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeout))
 	defer cancel()
 
-	response, err := h.serviceManager.ProductService().Update(ctx, &pbp.Product{
-		Id:           body.Id,
-		ProductName:  body.ProductName,
-		ProductPrice: body.ProductPrice,
-		ProductAbout: body.ProductAbout,
-		CreatedAt:    body.CreatedAt,
-		UpdetedAt:    body.UpdetedAt,
-		DeletedAt:    body.DeletedAt,
+	response, err := h.serviceManager.CommentService().UpdateComment(ctx, &cc.UpdateRequest{
+		Id:        body.Id,
+        OwnerId:   body.OwnerId,
+        PostId:    body.PostId,
+        Text:      body.Text,
 	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
-		h.log.Error("failed to update user", l.Error(err))
+		h.log.Error("Failed to update Comment", l.Error(err))
 		return
 	}
 
 	c.JSON(http.StatusOK, response)
 }
 
-// DeleteProduct deletes product by id
-// @Summary DeleteProduct
+// DeleteComment deleted Comment by id
+// @Summary Delete Comment by id
 // @Security ApiKeyAuth
-// @Description Api deletes product
-// @Tags product
+// @Description Api deletes post
+// @Tags comment
 // @Accept json
 // @Produce json
 // @Param id path string true "id"
-// @Succes 200 {Object} model.Product
+// @Succes 200 {Object} model.Comments
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
 // @Router /v1/delete/{id} [delete]
-func (h *handlerV1) Delete(c *gin.Context) {
+func (h *handlerV1) DeleteComment(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
 
@@ -248,15 +229,15 @@ func (h *handlerV1) Delete(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeout))
 	defer cancel()
 
-	response, err := h.serviceManager.ProductService().Delete(
-		ctx, &pbp.GetRequest{
+	response, err := h.serviceManager.CommentService().DeleteComment(
+		ctx, &cc.GetDeleteCommentRequest{
 			Id: guid,
 		})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
-		h.log.Error("failed to delete user", l.Error(err))
+		h.log.Error("Failed to delete Comment", l.Error(err))
 		return
 	}
 

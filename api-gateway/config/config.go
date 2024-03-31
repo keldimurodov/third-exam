@@ -10,11 +10,17 @@ import (
 type Config struct {
 	Environment string // develop, staging, production
 
+	// user service configuration
 	UserServiceHost string
 	UserServicePort int
 
-	ProductServiceHost string
-	ProductServicePort int
+	// product service configuration
+	PostServiceHost string
+	PostServicePort int
+
+	// comment service configuration
+	CommentServiceHost string
+	CommentServicePort int
 
 	// context timeout in seconds
 	CtxTimeout int
@@ -41,13 +47,19 @@ func Load() Config {
 	c.LogLevel = cast.ToString(getOrReturnDefault("LOG_LEVEL", "debug"))
 	c.HTTPPort = cast.ToString(getOrReturnDefault("HTTP_PORT", ":8080"))
 
+	// user service configuration
 	c.UserServiceHost = cast.ToString(getOrReturnDefault("USER_SERVICE_HOST", "localhost"))
 	c.UserServicePort = cast.ToInt(getOrReturnDefault("USER_SERVICE_PORT", 9000))
 
-	c.ProductServiceHost = cast.ToString(getOrReturnDefault("PRODUCT_SERVICE_HOST", "localhost"))
-	c.ProductServicePort = cast.ToInt(getOrReturnDefault("PRODUCT_SERVICE_PORT", 8081))
+	// product service configuration
+	c.PostServiceHost = cast.ToString(getOrReturnDefault("POST_SERVICE_HOST", "localhost"))
+	c.PostServicePort = cast.ToInt(getOrReturnDefault("POST_SERVICE_PORT", 8000))
 
-	c.CtxTimeout = cast.ToInt(getOrReturnDefault("CTX_TIMEOUT", 7))
+	// comment service configuration
+	c.CommentServiceHost = cast.ToString(getOrReturnDefault("COMMENT_SERVICE_HOST", "localhost"))
+	c.CommentServicePort = cast.ToInt(getOrReturnDefault("COMMENT_SERVICE_PORT", 7000))
+
+	c.CtxTimeout = cast.ToInt(getOrReturnDefault("CTX_TIMEOUT", 5))
 
 	return c
 }

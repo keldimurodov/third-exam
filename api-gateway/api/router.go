@@ -1,11 +1,11 @@
 package api
 
 import (
-	_ "go-exam/api-gateway/api/docs" // swag
-	v1 "go-exam/api-gateway/api/handlers/v1"
-	"go-exam/api-gateway/config"
-	"go-exam/api-gateway/pkg/logger"
-	"go-exam/api-gateway/services"
+	_ "third-exam/api-gateway/api/docs" // swag
+	v1 "third-exam/api-gateway/api/handlers/v1"
+	"third-exam/api-gateway/config"
+	"third-exam/api-gateway/pkg/logger"
+	"third-exam/api-gateway/services"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -40,19 +40,20 @@ func New(option Option) *gin.Engine {
 	})
 
 	api := router.Group("/v1")
-	// users
-	api.POST("/users", handlerV1.CreateUser)
-	api.GET("/users/:id", handlerV1.GetUser)
-	api.GET("/users", handlerV1.GetAll)
-	api.PUT("/users/:id", handlerV1.UpdateUser)
-	api.DELETE("/users/:id", handlerV1.DeleteUser)
 
-	// product
-	api.POST("/create", handlerV1.Create)
-	api.GET("/get/:id", handlerV1.Get)
-	api.GET("/all", handlerV1.GetAll)
-	api.PUT("/update/:id", handlerV1.Update)
-	api.DELETE("/delete/:id", handlerV1.Delete)
+	// users
+	api.POST("/create", handlerV1.CreateUser)
+	api.GET("/get/:id", handlerV1.GetUser)
+	api.GET("/all", handlerV1.GetALlUsers)
+	api.PUT("/update/:id", handlerV1.UpdateUser)
+	api.DELETE("/delete/:id", handlerV1.DeleteUser)
+
+	// post
+	api.POST("/create", handlerV1.CreatePost)
+	api.GET("/get/:id", handlerV1.GetPost)
+	api.GET("/all", handlerV1.GetAllPosts)
+	api.PUT("/update/:id", handlerV1.UpdatePost)
+	api.DELETE("/delete/:id", handlerV1.DeletePost)
 
 	// register
 	api.POST("/sign", handlerV1.SignUp)

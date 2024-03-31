@@ -3,9 +3,10 @@ package services
 import (
 	"fmt"
 
-	"go-exam/api-gateway/config"
-	pbp "go-exam/api-gateway/genproto/product"
-	pbu "go-exam/api-gateway/genproto/user"
+	"third-exam/api-gateway/config"
+	p "third-exam/api-gateway/genproto/post"
+	u "third-exam/api-gateway/genproto/user"
+	c "third-exam/api-gateway/genproto/comment"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -13,21 +14,27 @@ import (
 )
 
 type IServiceManager interface {
-	UserService() pbu.UserServiceClient
-	ProductService() pbp.ProductServiceClient
+	UserService() u.UserServiceClient
+	PostService() p.PostServiceClient
+	CommentService() c.CommentServiceClient
 }
 
 type serviceManager struct {
-	userService    pbu.UserServiceClient
-	productService pbp.ProductServiceClient
+	userService    u.UserServiceClient
+	postService p.PostServiceClient
+	commentService c.CommentServiceClient
 }
 
-func (s *serviceManager) UserService() pbu.UserServiceClient {
+func (s *serviceManager) UserService() u.UserServiceClient {
 	return s.userService
 }
 
-func (s *serviceManager) ProductService() pbp.ProductServiceClient {
-	return s.productService
+func (s *serviceManager) PostService() p.PostServiceClient {
+	return s.postService
+}
+
+func (s *serviceManager) CommentService() c.CommentServiceClient {
+	return s.commentService
 }
 
 func NewServiceManager(conf *config.Config) (IServiceManager, error) {
@@ -41,15 +48,23 @@ func NewServiceManager(conf *config.Config) (IServiceManager, error) {
 	}
 
 	connPost, err := grpc.Dial(
-		fmt.Sprintf("%s:%d", conf.ProductServiceHost, conf.ProductServicePort),
+		fmt.Sprintf("%s:%d", conf.PostServiceHost, conf.PostServicePort),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return nil, err
+	}
+
+	connComment, err := grpc.Dial(
+		fmt.Sprintf("%s:%d", conf.CommentServiceHost, conf.CommentServicePort),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}
 
 	serviceManager := &serviceManager{
-		userService:    pbu.NewUserServiceClient(connUser),
-		productService: pbp.NewProductServiceClient(connPost),
+		userService:    u.NewUserServiceClient(connUser),
+		postService: p.NewPostServiceClient(connPost),
+		commentService: c.NewCommentServiceClient(connComment),
 	}
 
 	return serviceManager, nil

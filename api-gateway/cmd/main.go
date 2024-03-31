@@ -1,10 +1,10 @@
 package main
 
 import (
-	"go-exam/api-gateway/api"
-	"go-exam/api-gateway/config"
-	"go-exam/api-gateway/pkg/logger"
-	"go-exam/api-gateway/services"
+	"third-exam/api-gateway/api"
+	"third-exam/api-gateway/config"
+	"third-exam/api-gateway/pkg/logger"
+	"third-exam/api-gateway/services"
 )
 
 func main() {
