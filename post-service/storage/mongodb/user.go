@@ -7,7 +7,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	// "go.mongodb.org/mongo-driver/mongo/options"
 
 	p "third-exam/post-service/genproto/post"
 )
@@ -43,42 +43,82 @@ func (u *postRepo) CreatePost(post *p.Post) (*p.Post, error) {
 	return &postResp, nil
 }
 
-func (u *postRepo) GetPost(req *p.GetPostRequest) (*p.GetP, error) {
-	filter := bson.M{"id": req.Id}
-	var post p.GetP
-	err := u.mdb.FindOne(context.Background(), filter).Decode(&post)
-	if err != nil {
-		return nil, err
-	}
+// func (u *postRepo) CreatePost(post *p.Post) (*p.Post, error) {
 
-	return &post, nil
+//     _, err := u.mdb.InsertOne(context.Background(), post)
+// 	if err!= nil {
+//         return nil, err
+//     }
+//     return nil, nil
+// }
+
+// func (u *postRepo) GetPost(req *p.GetPostRequest) (*p.GetP, error) {
+// 	filter := bson.M{"id": req.Id}
+// 	var post p.GetP
+// 	err := u.mdb.FindOne(context.Background(), filter).Decode(&post)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return &post, nil
+// }
+
+func (u *postRepo) GetPost(postId *p.GetPostRequest) (*p.GetP, error) {
+    var post *p.GetP
+
+    err := u.mdb.FindOne(context.Background(), bson.M{"_id": postId}).Decode(&post)
+    return post, err
 }
 
-func (u *postRepo) GetAllPosts(req *p.GetAllRequest) (*p.GetAllResponse, error) {
-	options := options.Find()
-	options.SetLimit(req.Limit)
-	options.SetSkip(req.Limit * (req.Page - 1))
 
-	cursor, err := u.mdb.Find(context.Background(), bson.M{}, options)
-	if err != nil {
-		return nil, err
-	}
-	defer cursor.Close(context.Background())
+// func (u *postRepo) GetAllPosts(req *p.GetAllRequest) (*p.GetAllResponse, error) {
+// 	options := options.Find()
+// 	options.SetLimit(req.Limit)
+// 	options.SetSkip(req.Limit * (req.Page - 1))
 
-	var allPosts p.GetAllResponse
-	for cursor.Next(context.Background()) {
-		var post p.Post
-		if err := cursor.Decode(&post); err != nil {
-			return nil, err
-		}
-		allPosts.Posts = append(allPosts.Posts, &post)
-	}
-	if err := cursor.Err(); err != nil {
-		return nil, err
-	}
+// 	cursor, err := u.mdb.Find(context.Background(), bson.M{}, options)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	defer cursor.Close(context.Background())
 
-	return &allPosts, nil
+// 	var allPosts p.GetAllResponse
+// 	for cursor.Next(context.Background()) {
+// 		var post p.Post
+// 		if err := cursor.Decode(&post); err != nil {
+// 			return nil, err
+// 		}
+// 		allPosts.Posts = append(allPosts.Posts, &post)
+// 	}
+// 	if err := cursor.Err(); err != nil {
+// 		return nil, err
+// 	}
+
+// 	return &allPosts, nil
+// }
+
+func (u *postRepo) GetAllPosts(*p.GetAllRequest) (*p.GetAllResponse, error) {
+    var posts p.GetAllResponse
+
+    cursor, err := u.mdb.Find(context.Background(), bson.M{})
+    if err != nil {
+        return nil, err
+    }
+    defer cursor.Close(context.Background())
+    for cursor.Next(context.Background()) {
+        var post p.Post
+        err := cursor.Decode(&post)
+        if err != nil {
+            return nil, err
+        }
+        posts.Posts = append(posts.Posts, &post)
+    }
+    if err := cursor.Err(); err != nil {
+        return nil, err
+    }
+    return &posts, nil
 }
+
 
 func (u *postRepo) UpdatePost(req *p.Post) (*p.Post, error) {
 	update := bson.M{

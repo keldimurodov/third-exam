@@ -23,8 +23,6 @@ func (r *postRepo) CreatePost(post *p.Post) (*p.Post, error) {
 	idd := uuid.NewString()
 	post.Id = idd
 
-	var re p.Post
-
 	query := `INSERT INTO Posts(
 			id, 
 			userID, 
@@ -46,17 +44,17 @@ func (r *postRepo) CreatePost(post *p.Post) (*p.Post, error) {
         	categories,
 			created_at, 
         	updeted_at`
-	er := r.db.QueryRow(query, post.Id, post.UserID, post.Content, post.Title, post.Likes, post.Dislikes, post.Views, post.Categories).Scan(
-		&re.Id,
-		&re.UserID,
-		&re.Content,
-		&re.Title,
-		&re.Likes,
-		&re.Dislikes,
-		&re.Views,
-		&re.Categories,
-		&re.CreatedAt,
-		&re.UpdetedAt,
+	er := r.db.QueryRow(query, idd, post.UserID, post.Content, post.Title, post.Likes, post.Dislikes, post.Views, post.Categories).Scan(
+		&post.Id,
+        &post.UserID,
+        &post.Content,
+        &post.Title,
+        &post.Likes,
+        &post.Dislikes,
+        &post.Views,
+        &post.Categories,
+        &post.CreatedAt,
+        &post.UpdetedAt,
 	)
 	if er != nil {
 		log.Println(er)
@@ -67,8 +65,6 @@ func (r *postRepo) CreatePost(post *p.Post) (*p.Post, error) {
 		Posts 
 	SET 
 		views = views + 1
-	WHERE
-		id = $1
 	RETURNING
 		id,
 		userID, 
@@ -82,7 +78,7 @@ func (r *postRepo) CreatePost(post *p.Post) (*p.Post, error) {
 		updeted_at`
 
 	var respUser p.Post
-	errr := r.db.QueryRow(updated_query, post.Id).Scan(
+	errr := r.db.QueryRow(updated_query).Scan(
 		&respUser.Id,
 		&respUser.UserID,
 		&respUser.Content,
@@ -103,6 +99,9 @@ func (r *postRepo) CreatePost(post *p.Post) (*p.Post, error) {
 }
 
 func (r *postRepo) GetPost(pp *p.GetPostRequest) (*p.GetP, error) {
+
+
+	var respUser p.Post
 
 	updated_query := `
 	UPDATE 
@@ -125,7 +124,6 @@ func (r *postRepo) GetPost(pp *p.GetPostRequest) (*p.GetP, error) {
 		created_at,
 		updeted_at`
 
-	var respUser p.Post
 	errr := r.db.QueryRow(updated_query, pp.Id).Scan(
 		&respUser.Id,
 		&respUser.UserID,
@@ -140,7 +138,7 @@ func (r *postRepo) GetPost(pp *p.GetPostRequest) (*p.GetP, error) {
 	)
 
 	if errr != nil {
-		return nil, errr
+		log.Println("Error updating", errr)
 	}
 
 	que := `SELECT 
@@ -156,11 +154,7 @@ func (r *postRepo) GetPost(pp *p.GetPostRequest) (*p.GetP, error) {
 		post_id = $1`
 	rows, err := r.db.Query(que, pp.Id)
 	if err != nil {
-		// agar comment yo'q bo'lsa shunchaki nil qaytarvoradi faqat comment uchun
-		return &p.GetP{
-			Post:     &respUser,
-			Comments: nil,
-		}, nil
+		log.Println("Commentlarni olib bo'lmadi", err)
 	}
 
 	var comments []*p.Comments
@@ -170,19 +164,19 @@ func (r *postRepo) GetPost(pp *p.GetPostRequest) (*p.GetP, error) {
 
 		err := rows.Scan(&comment.Id, &comment.OwnerId, &comment.PostId, &comment.Text)
 		if err != nil {
-			// birorta commentni olishda muammo bo'lsa shunchaki bo'sh string qaytarvorishi uchun
 			log.Println("Commentlarni olishda muammo bo'ldi...")
+			return nil, err
 		}
 
 		comments = append(comments, &comment)
 	}
 
-	return &p.GetP{
+	responce := &p.GetP{
 		Post:     &respUser,
 		Comments: comments,
-	}, nil
+	}
 
-	// return &respUser, nil
+	return responce, nil
 }
 
 func (r *postRepo) GetAllPosts(pp *p.GetAllRequest) (*p.GetAllResponse, error) {
