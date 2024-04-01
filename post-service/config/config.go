@@ -53,7 +53,7 @@ func Load() Config {
 
 	c.RPCPort = cast.ToString(getOrReturnDefault("RPC_PORT", ":8000"))
 
-	c.MongoDatabase = cast.ToString(getOrReturnDefault("MONGO_DATABASE", "exam4"))
+	c.MongoDatabase = cast.ToString(getOrReturnDefault("MONGO_DATABASE", "exam"))
 	c.MongoHost = cast.ToString(getOrReturnDefault("MONGO_HOST", "localhost"))
 	c.MongoPort = cast.ToInt(getOrReturnDefault("MONGO_PORT", 27017))
 
