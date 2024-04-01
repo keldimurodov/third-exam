@@ -6,6 +6,9 @@ build:
 proto-gen:
 	./scripts/gen-proto.sh
 
+lint: ## Run golangci-lint with printing to stdout
+	golangci-lint -c .golangci.yaml run --build-tags "musl" ./...
+
 swag-gen:
 	swag init -g ./api/router.go -o api/docs
 

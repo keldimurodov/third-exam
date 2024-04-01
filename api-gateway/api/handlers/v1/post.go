@@ -20,14 +20,14 @@ import (
 // @Summary CreatePost ...
 // @Security ApiKeyAuth
 // @Description Api for creating a new post
-// @Tags product
+// @Tags post
 // @Accept json
 // @Produce json
 // @Param Product body models.Post true "createPost"
-// @Success 200 {object} models.Post created successfully
+// @Success 200 {object} models.Post
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/create/ [post]
+// @Router /v1/post/ [post]
 func (h *handlerV1) CreatePost(c *gin.Context) {
 	var (
 		body        models.Post
@@ -106,7 +106,7 @@ func (h *handlerV1) CreatePost(c *gin.Context) {
 // @Success 200 {object} models.Post
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/get/{id} [get]
+// @Router /v1/post/{id} [get]
 func (h *handlerV1) GetPost(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
@@ -143,7 +143,7 @@ func (h *handlerV1) GetPost(c *gin.Context) {
 // @Succes 200 {object} models.Post
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/all/ [get]
+// @Router /v1/posts/ [get]
 func (h *handlerV1) GetAllPosts(c *gin.Context) {
 	queryParams := c.Request.URL.Query()
 
@@ -189,10 +189,10 @@ func (h *handlerV1) GetAllPosts(c *gin.Context) {
 // @Succes 200 {Object} models.Post
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/update/{id} [put]
+// @Router /v1/post/{id} [put]
 func (h *handlerV1) UpdatePost(c *gin.Context) {
 	var (
-		body        models.Comments
+		body        models.Post
 		jspbMarshal protojson.MarshalOptions
 	)
 	jspbMarshal.UseProtoNames = true
@@ -234,7 +234,7 @@ func (h *handlerV1) UpdatePost(c *gin.Context) {
 // @Succes 200 {Object} model.Post
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/delete/{id} [delete]
+// @Router /v1/post/{id} [delete]
 func (h *handlerV1) DeletePost(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true

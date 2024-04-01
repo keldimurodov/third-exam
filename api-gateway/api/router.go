@@ -20,9 +20,9 @@ type Option struct {
 	ServiceManager services.IServiceManager
 }
 
-// @Title Welcome to ProductAPI
+// @Title Welcome to API-GATEWAY
 // @Version 1.0
-// @Description This is a example of Social Network
+// @Description This is a example of USER SERVICE, POST SERVICE and COMMENT SERVICE. Author Sardor Keldimurodov
 // @Host localhost:8080
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
@@ -42,18 +42,25 @@ func New(option Option) *gin.Engine {
 	api := router.Group("/v1")
 
 	// users
-	api.POST("/create", handlerV1.CreateUser)
-	api.GET("/get/:id", handlerV1.GetUser)
-	api.GET("/all", handlerV1.GetALlUsers)
-	api.PUT("/update/:id", handlerV1.UpdateUser)
-	api.DELETE("/delete/:id", handlerV1.DeleteUser)
+	api.POST("/user", handlerV1.CreateUser)
+	api.GET("/user/:id", handlerV1.GetUser)
+	api.GET("/users", handlerV1.GetALlUsers)
+	api.PUT("/user/:id", handlerV1.UpdateUser)
+	api.DELETE("/user/:id", handlerV1.DeleteUser)
 
 	// post
-	api.POST("/create", handlerV1.CreatePost)
-	api.GET("/get/:id", handlerV1.GetPost)
-	api.GET("/all", handlerV1.GetAllPosts)
-	api.PUT("/update/:id", handlerV1.UpdatePost)
-	api.DELETE("/delete/:id", handlerV1.DeletePost)
+	api.POST("/post", handlerV1.CreatePost)
+	api.GET("/post/:id", handlerV1.GetPost)
+	api.GET("/posts", handlerV1.GetAllPosts)
+	api.PUT("/post/:id", handlerV1.UpdatePost)
+	api.DELETE("/post/:id", handlerV1.DeletePost)
+
+	// comments
+	api.POST("/comment", handlerV1.CreateComment)
+	api.GET("/comment/:id", handlerV1.GetComment)
+	api.GET("/comments", handlerV1.GetAllComments)
+	api.PUT("/comment/:id", handlerV1.UpdateComment)
+	api.DELETE("/comment/:id", handlerV1.DeleteComment)
 
 	// register
 	api.POST("/sign", handlerV1.SignUp)

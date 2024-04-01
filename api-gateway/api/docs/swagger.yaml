@@ -1,10 +1,5 @@
 definitions:
-  models.Error:
-    properties:
-      message:
-        type: string
-    type: object
-  models.Product:
+  models.Comments:
     properties:
       created_at:
         type: string
@@ -12,19 +7,70 @@ definitions:
         type: string
       id:
         type: string
-      product_about:
+      owner_id:
         type: string
-      product_name:
+      post_id:
         type: string
-      product_price:
+      text:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.Error:
+    properties:
+      message:
+        type: string
+    type: object
+  models.Post:
+    properties:
+      categories:
+        type: string
+      comments:
+        items:
+          $ref: '#/definitions/models.Comments'
+        type: array
+      content:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      dislikes:
         type: integer
-      refresh_token:
+      id:
+        type: string
+      likes:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+      userID:
+        type: string
+      views:
+        type: integer
+    type: object
+  models.PostComments:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: string
+      owner_id:
+        type: string
+      post_id:
+        type: string
+      text:
         type: string
       updated_at:
         type: string
     type: object
   models.ResponseUser:
     properties:
+      bio:
+        type: string
       code:
         type: string
       email:
@@ -35,6 +81,10 @@ definitions:
         type: string
       password:
         type: string
+      username:
+        type: string
+      website:
+        type: string
     type: object
   models.StandardErrorModel:
     properties:
@@ -43,6 +93,12 @@ definitions:
     type: object
   models.User:
     properties:
+      bio:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
       email:
         type: string
       id:
@@ -53,9 +109,17 @@ definitions:
         type: string
       password:
         type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+      website:
+        type: string
     type: object
   models.UserDetail:
     properties:
+      bio:
+        type: string
       email:
         type: string
       first_name:
@@ -64,19 +128,140 @@ definitions:
         type: string
       password:
         type: string
+      username:
+        type: string
+      website:
+        type: string
     type: object
 host: localhost:8080
 info:
   contact: {}
-  description: This is a example of Social Network
-  title: Welcome to ProductAPI
+  description: This is a example of USER SERVICE, POST SERVICE and COMMENT SERVICE.
+    Author Sardor Keldimurodov
+  title: Welcome to API-GATEWAY
   version: "1.0"
 paths:
-  /v1/all/:
+  /v1/comment/:
+    post:
+      consumes:
+      - application/json
+      description: Api for creating a new comment
+      parameters:
+      - description: createComment
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/models.PostComments'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PostComments'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+      security:
+      - ApiKeyAuth: []
+      summary: CreateComment ...
+      tags:
+      - comment
+  /v1/comment/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Api deletes post
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Comment by id
+      tags:
+      - comment
     get:
       consumes:
       - application/json
-      description: Api returns list of products
+      description: Api for getting comment by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PostComments'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+      security:
+      - ApiKeyAuth: []
+      summary: GetComment
+      tags:
+      - comment
+    put:
+      consumes:
+      - application/json
+      description: Api returns updates comment
+      parameters:
+      - description: UpdateComment
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/models.PostComments'
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Commment
+      tags:
+      - comment
+  /v1/comments/:
+    get:
+      consumes:
+      - application/json
+      description: Api returns list of comments from
       parameters:
       - description: Page
         in: path
@@ -101,99 +286,9 @@ paths:
             $ref: '#/definitions/models.StandardErrorModel'
       security:
       - ApiKeyAuth: []
-      summary: All products
+      summary: All comments from the service
       tags:
-      - product
-  /v1/create/:
-    post:
-      consumes:
-      - application/json
-      description: Api for creating a new product
-      parameters:
-      - description: createProduct
-        in: body
-        name: Product
-        required: true
-        schema:
-          $ref: '#/definitions/models.Product'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Product'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.StandardErrorModel'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.StandardErrorModel'
-      security:
-      - ApiKeyAuth: []
-      summary: CreateProduct ...
-      tags:
-      - product
-  /v1/delete/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Api deletes product
-      parameters:
-      - description: id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.StandardErrorModel'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.StandardErrorModel'
-      security:
-      - ApiKeyAuth: []
-      summary: DeleteProduct
-      tags:
-      - product
-  /v1/get/{id}:
-    get:
-      consumes:
-      - application/json
-      description: Api for getting product by id
-      parameters:
-      - description: id
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Product'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.StandardErrorModel'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.StandardErrorModel'
-      security:
-      - ApiKeyAuth: []
-      summary: GetProduct
-      tags:
-      - product
+      - comment
   /v1/login:
     get:
       consumes:
@@ -230,6 +325,154 @@ paths:
       summary: LogIn User
       tags:
       - registr
+  /v1/post/:
+    post:
+      consumes:
+      - application/json
+      description: Api for creating a new post
+      parameters:
+      - description: createPost
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/models.Post'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Post'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+      security:
+      - ApiKeyAuth: []
+      summary: CreatePost ...
+      tags:
+      - post
+  /v1/post/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Api deletes post
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Post
+      tags:
+      - post
+    get:
+      consumes:
+      - application/json
+      description: Api for getting post by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Post'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+      security:
+      - ApiKeyAuth: []
+      summary: GetPost
+      tags:
+      - post
+    put:
+      consumes:
+      - application/json
+      description: Api returns updates post
+      parameters:
+      - description: UpdatePost
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/models.Post'
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+      security:
+      - ApiKeyAuth: []
+      summary: UpdatePost
+      tags:
+      - post
+  /v1/posts/:
+    get:
+      consumes:
+      - application/json
+      description: Api returns list of posts
+      parameters:
+      - description: Page
+        in: path
+        name: page
+        required: true
+        type: integer
+      - description: Limit
+        in: path
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+      security:
+      - ApiKeyAuth: []
+      summary: All posts
+      tags:
+      - post
   /v1/sign/:
     post:
       consumes:
@@ -262,66 +505,7 @@ paths:
       summary: Sign User
       tags:
       - registr
-  /v1/update/{id}:
-    put:
-      consumes:
-      - application/json
-      description: Api returns updates user
-      parameters:
-      - description: UpdateProduct
-        in: body
-        name: Product
-        required: true
-        schema:
-          $ref: '#/definitions/models.Product'
-      produces:
-      - application/json
-      responses:
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.StandardErrorModel'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.StandardErrorModel'
-      security:
-      - ApiKeyAuth: []
-      summary: UpdateProduct
-      tags:
-      - product
-  /v1/users/:
-    get:
-      consumes:
-      - application/json
-      description: Api returns list of users
-      parameters:
-      - description: Page
-        in: path
-        name: page
-        required: true
-        type: integer
-      - description: Limit
-        in: path
-        name: limit
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/models.StandardErrorModel'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.StandardErrorModel'
-      security:
-      - ApiKeyAuth: []
-      summary: ListUser
-      tags:
-      - user
+  /v1/user/:
     post:
       consumes:
       - application/json
@@ -353,11 +537,11 @@ paths:
       summary: CreateUser
       tags:
       - user
-  /v1/users/{id}:
+  /v1/user/{id}:
     delete:
       consumes:
       - application/json
-      description: Api deletes user
+      description: Api deleted user
       produces:
       - application/json
       responses:
@@ -422,6 +606,38 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: UpdateUser
+      tags:
+      - user
+  /v1/users/:
+    get:
+      consumes:
+      - application/json
+      description: Api returns list of users
+      parameters:
+      - description: Page
+        in: path
+        name: page
+        required: true
+        type: integer
+      - description: Limit
+        in: path
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.StandardErrorModel'
+      security:
+      - ApiKeyAuth: []
+      summary: GetAllUser
       tags:
       - user
   /v1/verification:

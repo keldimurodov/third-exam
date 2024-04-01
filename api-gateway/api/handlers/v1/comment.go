@@ -21,14 +21,14 @@ import (
 // @Tags comment
 // @Accept json
 // @Produce json
-// @Param Product body models.Comment true "createComment"
-// @Success 200 {object} models.Comment created successfully
+// @Param Product body models.PostComments true "createComment"
+// @Success 200 {object} models.PostComments
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/create/ [post]
+// @Router /v1/comment/ [post]
 func (h *handlerV1) CreateComment(c *gin.Context) {
 	var (
-		body        models.Comments
+		body        models.PostComments
 		jspbMarshal protojson.MarshalOptions
 	)
 	jspbMarshal.UseProtoNames = true
@@ -84,10 +84,10 @@ func (h *handlerV1) CreateComment(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path string true "id"
-// @Success 200 {object} models.Comments
+// @Success 200 {object} models.PostComments
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/get/{id} [get]
+// @Router /v1/comment/{id} [get]
 func (h *handlerV1) GetComment(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
@@ -116,15 +116,15 @@ func (h *handlerV1) GetComment(c *gin.Context) {
 // @Summary All comments from the service
 // @Security ApiKeyAuth
 // @Description Api returns list of comments from
-// @Tags commment
+// @Tags comment
 // @Accept json
 // @Produce json
 // @Param page path int64 true "Page"
 // @Param limit path int64 true "Limit"
-// @Succes 200 {object} models.Comments
+// @Succes 200 {object} models.PostComments
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/all/ [get]
+// @Router /v1/comments/ [get]
 func (h *handlerV1) GetAllComments(c *gin.Context) {
 	queryParams := c.Request.URL.Query()
 
@@ -166,14 +166,14 @@ func (h *handlerV1) GetAllComments(c *gin.Context) {
 // @Tags comment
 // @Accept json
 // @Produce json
-// @Param Product body models.Comment true "UpdatePost"
-// @Succes 200 {Object} models.Comments
+// @Param Product body models.PostComments true "UpdateComment"
+// @Succes 200 {Object} models.PostComments
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/update/{id} [put]
+// @Router /v1/comment/{id} [put]
 func (h *handlerV1) UpdateComment(c *gin.Context) {
 	var (
-		body        models.Comments
+		body        models.PostComments
 		jspbMarshal protojson.MarshalOptions
 	)
 	jspbMarshal.UseProtoNames = true
@@ -219,7 +219,7 @@ func (h *handlerV1) UpdateComment(c *gin.Context) {
 // @Succes 200 {Object} model.Comments
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/delete/{id} [delete]
+// @Router /v1/comment/{id} [delete]
 func (h *handlerV1) DeleteComment(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true

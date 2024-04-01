@@ -13,7 +13,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-// Sign
+// SignUp
 // @Summary Sign User
 // @Security ApiKeyAuth
 // @Description Sign - Api for registring users
@@ -49,6 +49,9 @@ func (h *handlerV1) SignUp(c *gin.Context) {
 	response, err := h.serviceManager.UserService().Sign(ctx, &pbu.UserDetail{
 		FirstName: body.FirstName,
 		LastName:  body.LastName,
+		Username:  body.Username,
+        Bio:       body.Bio,
+        Website:   body.Website,
 		Email:     body.Email,
 		Password:  body.Password,
 	})

@@ -10,6 +10,9 @@ import (
 type UserDetail struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
+	Username  string `json:"username"`
+	Bio       string `json:"bio"`
+	Website   string `json:"website"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 }
@@ -30,6 +33,9 @@ type VerifyUserResponse struct {
 type ResponseUser struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
+	Username  string `json:"username"`
+	Bio       string `json:"bio"`
+	Website   string `json:"website"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 	Code      string `json:"code"`

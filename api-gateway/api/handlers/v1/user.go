@@ -26,7 +26,7 @@ import (
 // @Success 200 {object} models.User
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/users/ [post]
+// @Router /v1/user/ [post]
 func (h *handlerV1) CreateUser(c *gin.Context) {
 	var (
 		body        models.User
@@ -82,7 +82,7 @@ func (h *handlerV1) CreateUser(c *gin.Context) {
 // @Success 200 {object} models.User
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/users/{id} [get]
+// @Router /v1/user/{id} [get]
 func (h *handlerV1) GetUser(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
@@ -164,7 +164,7 @@ func (h *handlerV1) GetALlUsers(c *gin.Context) {
 // @Succes 200 {Object} models.User
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/users/{id} [put]
+// @Router /v1/user/{id} [put]
 func (h *handlerV1) UpdateUser(c *gin.Context) {
 	var (
 		body        u.User
@@ -207,7 +207,7 @@ func (h *handlerV1) UpdateUser(c *gin.Context) {
 // @Succes 200 {Object} models.User
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/users/{id} [delete]
+// @Router /v1/user/{id} [delete]
 func (h *handlerV1) DeleteUser(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
