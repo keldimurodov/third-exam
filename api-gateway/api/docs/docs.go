@@ -322,15 +322,15 @@ const docTemplate = `{
                 "tags": [
                     "post"
                 ],
-                "summary": "CreatePost ...",
+                "summary": "Create Post ...",
                 "parameters": [
                     {
                         "description": "createPost",
-                        "name": "Product",
+                        "name": "Post",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Post"
+                            "$ref": "#/definitions/models.PostRequest"
                         }
                     }
                 ],
@@ -963,6 +963,32 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                }
+            }
+        },
+        "models.PostRequest": {
+            "type": "object",
+            "properties": {
+                "categories": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "dislikes": {
+                    "type": "integer"
+                },
+                "likes": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "views": {
+                    "type": "integer"
                 }
             }
         },

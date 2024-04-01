@@ -36,7 +36,7 @@ func New(c *HandlerV1Config) *handlerV1 {
 	}
 }
 
-func handleBadRequestWithErrorMessage(c *gin.Context, l logger.Logger, err error, message string) bool {
+func HandleBadRequestWithErrorMessage(c *gin.Context, l logger.Logger, err error, message string) bool {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.StandardErrorModel{
 			Error: models.Error{

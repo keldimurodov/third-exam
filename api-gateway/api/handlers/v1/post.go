@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"google.golang.org/protobuf/encoding/protojson"
 
 	models "third-exam/api-gateway/api/handlers/models"
@@ -17,13 +18,13 @@ import (
 )
 
 // CreatePost ...
-// @Summary CreatePost ...
+// @Summary Create Post ...
 // @Security ApiKeyAuth
 // @Description Api for creating a new post
 // @Tags post
 // @Accept json
 // @Produce json
-// @Param Product body models.Post true "createPost"
+// @Param Post body models.PostRequest true "createPost"
 // @Success 200 {object} models.Post
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
@@ -64,25 +65,27 @@ func (h *handlerV1) CreatePost(c *gin.Context) {
 	// }
 	// fmt.Println("Tokens are working well")
 
+	postID := uuid.NewString()
+
 	response, err := h.serviceManager.PostService().CreatePost(ctx, &p.Post{
-		Id: body.Id,
-		UserID: body.UserID,
-		Content: body.Content,
-        Title: body.Title,
-        Likes: body.Likes,
-        Dislikes: body.Dislikes,
-        Views: body.Views,
+		Id:       postID,
+		UserID:   body.UserID,
+		Content:  body.Content,
+		Title:    body.Title,
+		Likes:    body.Likes,
+		Dislikes: body.Dislikes,
+		Views:    body.Views,
 	})
 
-	respBody := &models.Post{
-		Id:           response.Id,
-		UserID: response.UserID,
-		Content: response.Content,
-        Title: response.Title,
-        Likes: response.Likes,
-        Dislikes: response.Dislikes,
-        Views: response.Views,
-	}
+	// respBody := &models.Post{
+	// 	Id:       response.Id,
+	// 	UserID:   response.UserID,
+	// 	Content:  response.Content,
+	// 	Title:    response.Title,
+	// 	Likes:    response.Likes,
+	// 	Dislikes: response.Dislikes,
+	// 	Views:    response.Views,
+	// }
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -92,7 +95,7 @@ func (h *handlerV1) CreatePost(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, respBody)
+	c.JSON(http.StatusCreated, response)
 }
 
 // GetPost get post by id
@@ -210,8 +213,7 @@ func (h *handlerV1) UpdatePost(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeout))
 	defer cancel()
 
-	response, err := h.serviceManager.PostService().UpdatePost(ctx, &p.Post{
-	})
+	response, err := h.serviceManager.PostService().UpdatePost(ctx, &p.Post{})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

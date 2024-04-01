@@ -67,6 +67,23 @@ definitions:
       updated_at:
         type: string
     type: object
+  models.PostRequest:
+    properties:
+      categories:
+        type: string
+      content:
+        type: string
+      dislikes:
+        type: integer
+      likes:
+        type: integer
+      title:
+        type: string
+      user_id:
+        type: string
+      views:
+        type: integer
+    type: object
   models.ResponseUser:
     properties:
       bio:
@@ -333,10 +350,10 @@ paths:
       parameters:
       - description: createPost
         in: body
-        name: Product
+        name: Post
         required: true
         schema:
-          $ref: '#/definitions/models.Post'
+          $ref: '#/definitions/models.PostRequest'
       produces:
       - application/json
       responses:
@@ -354,7 +371,7 @@ paths:
             $ref: '#/definitions/models.StandardErrorModel'
       security:
       - ApiKeyAuth: []
-      summary: CreatePost ...
+      summary: Create Post ...
       tags:
       - post
   /v1/post/{id}:

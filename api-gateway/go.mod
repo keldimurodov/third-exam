@@ -8,6 +8,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/golang/protobuf v1.5.4
+	github.com/google/uuid v1.6.0
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/spf13/cast v1.6.0
 	github.com/swaggo/files v1.0.1

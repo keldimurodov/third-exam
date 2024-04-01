@@ -10,6 +10,16 @@ type Comments struct {
 	DeletedAt string `json:"deleted_at"`
 }
 
+type PostRequest struct {
+	UserID string `json:"user_id"`
+	Content string `json:"content"`
+	Title   string `json:"title"`
+	Likes   int64  `json:"likes"`
+	Dislikes int64  `json:"dislikes"`
+	Views   int64  `json:"views"`
+	Categories string `json:"categories"`
+}
+
 type Post struct {
 	Id         string `json:"id"`
 	UserID     string `json:"userID"`
