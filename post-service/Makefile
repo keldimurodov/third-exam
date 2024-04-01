@@ -7,4 +7,3 @@ proto-gen:
 
 run:
 	go run cmd/main.go
-

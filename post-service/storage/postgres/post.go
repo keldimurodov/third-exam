@@ -5,6 +5,7 @@ import (
 	p "third-exam/post-service/genproto/post"
 
 	"github.com/google/uuid"
+
 	"github.com/jmoiron/sqlx"
 )
 
@@ -139,8 +140,8 @@ func (r *postRepo) GetPost(pp *p.GetPostRequest) (*p.GetP, error) {
 	)
 
 	if errr != nil {
-        return nil, errr
-    }
+		return nil, errr
+	}
 
 	que := `SELECT 
 		id, 

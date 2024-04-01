@@ -2,7 +2,7 @@ package grpcClient
 
 import (
 	"fmt"
-	config "third-exam/post-service/config"
+	"third-exam/post-service/config"
 	c "third-exam/post-service/genproto/comment"
 	u "third-exam/post-service/genproto/user"
 
@@ -13,39 +13,41 @@ type IServiceManager interface {
 	UserService() u.UserServiceClient
 	CommentService() c.CommentServiceClient
 }
+
 type serviceManager struct {
-	cfg     config.Config
-	User    u.UserServiceClient
-	Comment c.CommentServiceClient
-}
-
-func (s *serviceManager) UserService() u.UserServiceClient {
-	return s.User
-}
-
-func (s *serviceManager) CommentService() c.CommentServiceClient {
-	return s.Comment
+	cfg            config.Config
+	userService    u.UserServiceClient
+	commentService c.CommentServiceClient
 }
 
 func New(cfg config.Config) (IServiceManager, error) {
-	UserConnection, err := grpc.Dial(
+	// dail to user-service
+	connUser, err := grpc.Dial(
 		fmt.Sprintf("%s:%d", cfg.UserServiceHost, cfg.UserServicePort),
-		grpc.WithInsecure())
-
+		grpc.WithInsecure(),
+	)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("user service dail host: %s port : %d", cfg.UserServiceHost, cfg.UserServicePort)
 	}
-
-	CommentConnection, err := grpc.Dial(
+	// dail to comment-service
+	connComment, err := grpc.Dial(
 		fmt.Sprintf("%s:%d", cfg.CommentServiceHost, cfg.CommentServicePort),
-		grpc.WithInsecure())
+		grpc.WithInsecure(),
+	)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("comment service dail host: %s port : %d", cfg.CommentServiceHost, cfg.CommentServicePort)
 	}
-
 	return &serviceManager{
-		cfg:     cfg,
-		User:    u.NewUserServiceClient(UserConnection),
-		Comment: c.NewCommentServiceClient(CommentConnection)}, nil
+		cfg:            cfg,
+		userService:    u.NewUserServiceClient(connUser),
+		commentService: c.NewCommentServiceClient(connComment),
+	}, nil
+}
 
+func (s *serviceManager) UserService() u.UserServiceClient {
+	return s.userService
+}
+
+func (s *serviceManager) CommentService() c.CommentServiceClient {
+	return s.commentService
 }
