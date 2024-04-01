@@ -1,7 +1,6 @@
 package postgres
 
 import (
-	"log"
 	c "third-exam/comment-service/genproto/comment"
 
 	"github.com/google/uuid"
@@ -37,17 +36,6 @@ func (r *commentRepo) CreateComment(comment *c.Comment) (*c.Comment, error) {
 			text, 
 			created_at, 
         	updeted_at`
-	
-	j_query := `
-	    INSERT INTO PostComments(
-			comment_id
-		) VALUES ($1) `
-
-	eerr := r.db.QueryRow(j_query, comment.Id)
-
-	if eerr!= nil {
-        log.Println(eerr)
-    }
 
 	err := r.db.QueryRow(query, comment.Id, comment.OwnerId, comment.PostId, comment.Text).Scan(
 		&res.Id,
@@ -161,7 +149,7 @@ func (r *commentRepo) UpdateComment(cc *c.UpdateRequest) (*c.Comment, error) {
 		created_at, 
 		updeted_at`
 
-	err := r.db.QueryRow(query,cc.Text, cc.Id, cc.OwnerId, cc.PostId).Scan(
+	err := r.db.QueryRow(query, cc.Text, cc.Id, cc.OwnerId, cc.PostId).Scan(
 		&res.Id,
 		&res.OwnerId,
 		&res.PostId,
