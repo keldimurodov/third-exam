@@ -10,4 +10,4 @@ RUN go build -o main cmd/main.go
 
 CMD ["/app/main"]
 
-EXPOSE 8000
+EXPOSE 9000

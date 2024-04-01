@@ -52,14 +52,14 @@ func New(option Option) *gin.Engine {
 	api.POST("/post", handlerV1.CreatePost)
 	api.GET("/post/:id", handlerV1.GetPost)
 	api.GET("/posts", handlerV1.GetAllPosts)
-	api.PUT("/post/:id", handlerV1.UpdatePost)
+	api.PUT("/post", handlerV1.UpdatePost)
 	api.DELETE("/post/:id", handlerV1.DeletePost)
 
 	// comments
 	api.POST("/comment", handlerV1.CreateComment)
 	api.GET("/comment/:id", handlerV1.GetComment)
 	api.GET("/comments", handlerV1.GetAllComments)
-	api.PUT("/comment/:id", handlerV1.UpdateComment)
+	api.PUT("/comment", handlerV1.UpdateComment)
 	api.DELETE("/comment/:id", handlerV1.DeleteComment)
 
 	// register

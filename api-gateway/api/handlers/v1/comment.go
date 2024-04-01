@@ -165,7 +165,7 @@ func (h *handlerV1) GetAllComments(c *gin.Context) {
 // @Succes 200 {Object} models.PostComments
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/comment/{id} [put]
+// @Router /v1/comment [put]
 func (h *handlerV1) UpdateComment(c *gin.Context) {
 	var (
 		body        models.Comments
@@ -193,7 +193,7 @@ func (h *handlerV1) UpdateComment(c *gin.Context) {
 		Text:    body.Text,
 	})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		h.log.Error("Failed to update Comment", l.Error(err))

@@ -1,0 +1,103 @@
+services:
+  # PostgreSQL database server
+  db:
+    container_name: db
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      PGDATA: /data/postgres
+      POSTGRES_DB: exam
+    volumes:
+      - postgres_data:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - exam
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # MongoDB server
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - exam
+    restart: unless-stopped
+
+  # User server
+  user-service:
+    container_name: user
+    build: ./user-service
+    depends_on:
+      - db
+      - mongo
+    ports:
+      - "9000:9000"
+    networks:
+      - exam
+
+  # Post server
+  post-service:
+    container_name: post
+    build: ./post-service
+    depends_on:
+      - db
+      - mongo
+    ports:
+      - "8000:8000"
+    networks:
+      - exam
+
+  # Comment server
+  comment-service:
+    container_name: comment
+    build: ./comment-service
+    depends_on:
+      - db
+      - mongo
+    ports:
+      - "7000:7000"
+    networks:
+      - exam
+
+  # API Gateway server    
+  api-gateway:
+    container_name: api
+    build: ./api-gateway
+    depends_on:
+      - mongo
+      - user-service
+      - post-service
+      - comment-service
+    ports:
+      - "8080:8080"
+    networks:
+      - exam
+
+  # Migrations
+  migrate:
+    image: migrate/migrate
+    networks:
+      - exam
+    volumes:
+      - ./migrations:/migrations
+    command: ["-path", "/migrations", "-database", "postgres://postgres:123@db:5432/exam?sslmode=disable", "up"]
+    depends_on:
+      - db
+
+networks:
+  exam:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mongo_data:

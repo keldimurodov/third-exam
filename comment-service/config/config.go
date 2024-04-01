@@ -32,18 +32,18 @@ func Load() Config {
 
 	c.Environment = cast.ToString(getOrReturnDefault("ENVIRONMENT", "develop"))
 
-	c.PostgresHost = cast.ToString(getOrReturnDefault("POSTGRES_HOST", "localhost"))
+	c.PostgresHost = cast.ToString(getOrReturnDefault("POSTGRES_HOST", "db"))
 	c.PostgresPort = cast.ToInt(getOrReturnDefault("POSTGRES_PORT", 5432))
 	c.PostgresDatasbase = cast.ToString(getOrReturnDefault("POSTGRES_DATABASE", "exam"))
 	c.PostgresUser = cast.ToString(getOrReturnDefault("POSTGRES_USER", "postgres"))
 	c.PostgresPassword = cast.ToString(getOrReturnDefault("POSTGRES_PASSWORD", "123"))
 
 	// user service configuration
-	c.UserServiceHost = cast.ToString(getOrReturnDefault("USER_SERVICE_HOST","localhost"))
+	c.UserServiceHost = cast.ToString(getOrReturnDefault("USER_SERVICE_HOST","user"))
 	c.UserServicePort = cast.ToInt(getOrReturnDefault("USER_SERVICE_PORT", 9000))
 
 	// comment service configuration
-	c.PostServiceHost = cast.ToString(getOrReturnDefault("POST_SERVICE_HOST","localhost"))
+	c.PostServiceHost = cast.ToString(getOrReturnDefault("POST_SERVICE_HOST","post"))
     c.PostServicePort = cast.ToInt(getOrReturnDefault("POST_SERVICE_PORT", 8000))
 
 	c.LogLevel = cast.ToString(getOrReturnDefault("LOG_LEVEL", "debug"))

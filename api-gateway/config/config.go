@@ -48,15 +48,15 @@ func Load() Config {
 	c.HTTPPort = cast.ToString(getOrReturnDefault("HTTP_PORT", ":8080"))
 
 	// user service configuration
-	c.UserServiceHost = cast.ToString(getOrReturnDefault("USER_SERVICE_HOST", "localhost"))
+	c.UserServiceHost = cast.ToString(getOrReturnDefault("USER_SERVICE_HOST", "user"))
 	c.UserServicePort = cast.ToInt(getOrReturnDefault("USER_SERVICE_PORT", 9000))
 
 	// product service configuration
-	c.PostServiceHost = cast.ToString(getOrReturnDefault("POST_SERVICE_HOST", "localhost"))
+	c.PostServiceHost = cast.ToString(getOrReturnDefault("POST_SERVICE_HOST", "post"))
 	c.PostServicePort = cast.ToInt(getOrReturnDefault("POST_SERVICE_PORT", 8000))
 
 	// comment service configuration
-	c.CommentServiceHost = cast.ToString(getOrReturnDefault("COMMENT_SERVICE_HOST", "localhost"))
+	c.CommentServiceHost = cast.ToString(getOrReturnDefault("COMMENT_SERVICE_HOST", "comment"))
 	c.CommentServicePort = cast.ToInt(getOrReturnDefault("COMMENT_SERVICE_PORT", 7000))
 
 	c.CtxTimeout = cast.ToInt(getOrReturnDefault("CTX_TIMEOUT", 5))

@@ -192,7 +192,7 @@ func (h *handlerV1) GetAllPosts(c *gin.Context) {
 // @Succes 200 {Object} models.Post
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
-// @Router /v1/post/{id} [put]
+// @Router /v1/post [put]
 func (h *handlerV1) UpdatePost(c *gin.Context) {
 	var (
 		body        models.Post

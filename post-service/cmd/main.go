@@ -28,19 +28,19 @@ func main() {
 		log.Fatal("grpc client dail error", logger.Error(err))
 	}
 
-	// connDB, err, _ := db.ConnectToDB(cfg)
-	// if err != nil {
-	// 	log.Fatal("sqlx connection to postgres error", logger.Error(err))
-	// }
-
-	// postService := service.NewPostService(connDB, log, grpcClient)
-
-	conMongoDB, err := db.ConnectToMongoDB(cfg)
+	connDB, err, _ := db.ConnectToDB(cfg)
 	if err != nil {
-		log.Fatal("mongo connection to mongodb error", logger.Error(err))
+		log.Fatal("sqlx connection to postgres error", logger.Error(err))
 	}
 
-	postService := service.NewCommentServiceMongo(conMongoDB, log, grpcClient)
+	postService := service.NewPostService(connDB, log, grpcClient)
+
+	// conMongoDB, err := db.ConnectToMongoDB(cfg)
+	// if err != nil {
+	// 	log.Fatal("mongo connection to mongodb error", logger.Error(err))
+	// }
+
+	// postService := service.NewCommentServiceMongo(conMongoDB, log, grpcClient)
 
 	lis, err := net.Listen("tcp", cfg.RPCPort)
 	if err != nil {
