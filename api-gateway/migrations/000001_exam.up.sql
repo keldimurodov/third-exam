@@ -14,7 +14,7 @@ CREATE TABLE Users (
 
 CREATE TABLE Posts (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    userID UUID NOT NULL,
+    userID UUID,
     content TEXT,
     title VARCHAR(256),
     likes INTEGER,
@@ -28,8 +28,8 @@ CREATE TABLE Posts (
 
 CREATE TABLE Comments (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    owner_id UUID NOT NULL,
-    post_id UUID NOT NULL,
+    owner_id UUID,
+    post_id UUID,
     text TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updeted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

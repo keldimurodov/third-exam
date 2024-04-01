@@ -36,11 +36,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "createComment",
-                        "name": "Product",
+                        "name": "Post",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.PostComments"
+                            "$ref": "#/definitions/models.PostCommentsRequest"
                         }
                     }
                 ],
@@ -134,7 +134,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "UpdateComment",
-                        "name": "Product",
+                        "name": "Post",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -943,12 +943,6 @@ const docTemplate = `{
         "models.PostComments": {
             "type": "object",
             "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "deleted_at": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "string"
                 },
@@ -960,8 +954,19 @@ const docTemplate = `{
                 },
                 "text": {
                     "type": "string"
+                }
+            }
+        },
+        "models.PostCommentsRequest": {
+            "type": "object",
+            "properties": {
+                "post_id": {
+                    "type": "string"
                 },
-                "updated_at": {
+                "text": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }

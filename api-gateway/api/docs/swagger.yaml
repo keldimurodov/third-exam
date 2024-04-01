@@ -52,10 +52,6 @@ definitions:
     type: object
   models.PostComments:
     properties:
-      created_at:
-        type: string
-      deleted_at:
-        type: string
       id:
         type: string
       owner_id:
@@ -64,7 +60,14 @@ definitions:
         type: string
       text:
         type: string
-      updated_at:
+    type: object
+  models.PostCommentsRequest:
+    properties:
+      post_id:
+        type: string
+      text:
+        type: string
+      user_id:
         type: string
     type: object
   models.PostRequest:
@@ -166,10 +169,10 @@ paths:
       parameters:
       - description: createComment
         in: body
-        name: Product
+        name: Post
         required: true
         schema:
-          $ref: '#/definitions/models.PostComments'
+          $ref: '#/definitions/models.PostCommentsRequest'
       produces:
       - application/json
       responses:
@@ -254,7 +257,7 @@ paths:
       parameters:
       - description: UpdateComment
         in: body
-        name: Product
+        name: Post
         required: true
         schema:
           $ref: '#/definitions/models.PostComments'

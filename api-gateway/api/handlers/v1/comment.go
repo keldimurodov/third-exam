@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"google.golang.org/protobuf/encoding/protojson"
 
 	models "third-exam/api-gateway/api/handlers/models"
@@ -21,14 +22,14 @@ import (
 // @Tags comment
 // @Accept json
 // @Produce json
-// @Param Product body models.PostComments true "createComment"
+// @Param Post body models.PostCommentsRequest true "createComment"
 // @Success 200 {object} models.PostComments
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
 // @Router /v1/comment/ [post]
 func (h *handlerV1) CreateComment(c *gin.Context) {
 	var (
-		body        models.PostComments
+		body        models.Comments
 		jspbMarshal protojson.MarshalOptions
 	)
 	jspbMarshal.UseProtoNames = true
@@ -45,35 +46,29 @@ func (h *handlerV1) CreateComment(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeout))
 	defer cancel()
 
+	commentID := uuid.NewString()
+	commentOwnerID := uuid.NewString()
+	commentPostID := uuid.NewString()
+
 	response, err := h.serviceManager.CommentService().CreateComment(ctx, &cc.Comment{
-		Id:        body.Id,
-        OwnerId:   body.OwnerId,
-        PostId:    body.PostId,
-        Text:      body.Text,
-        CreatedAt: body.CreatedAt,
-        UpdatedAt: body.UpdatedAt,
-        DeletedAt: body.DeletedAt,
+		Id:        commentID,
+		OwnerId:   commentOwnerID,
+		PostId:    commentPostID,
+		Text:      body.Text,
+		CreatedAt: body.CreatedAt,
+		UpdatedAt: body.UpdatedAt,
+		DeletedAt: body.DeletedAt,
 	})
 
-	respBody := &models.Comments{
-		Id:        response.Id,
-        OwnerId:   response.OwnerId,
-        PostId:    response.PostId,
-        Text:      response.Text,
-        CreatedAt: response.CreatedAt,
-        UpdatedAt: response.UpdatedAt,
-        DeletedAt: response.DeletedAt,
-	}
-
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		h.log.Error("Failed to Create Comment", l.Error(err))
 		return
 	}
 
-	c.JSON(http.StatusCreated, respBody)
+	c.JSON(http.StatusCreated, response)
 }
 
 // GetComment get comment by id
@@ -166,14 +161,14 @@ func (h *handlerV1) GetAllComments(c *gin.Context) {
 // @Tags comment
 // @Accept json
 // @Produce json
-// @Param Product body models.PostComments true "UpdateComment"
+// @Param Post body models.PostComments true "UpdateComment"
 // @Succes 200 {Object} models.PostComments
 // @Failure 400 {object} models.StandardErrorModel
 // @Failure 500 {object} models.StandardErrorModel
 // @Router /v1/comment/{id} [put]
 func (h *handlerV1) UpdateComment(c *gin.Context) {
 	var (
-		body        models.PostComments
+		body        models.Comments
 		jspbMarshal protojson.MarshalOptions
 	)
 	jspbMarshal.UseProtoNames = true
@@ -192,10 +187,10 @@ func (h *handlerV1) UpdateComment(c *gin.Context) {
 	defer cancel()
 
 	response, err := h.serviceManager.CommentService().UpdateComment(ctx, &cc.UpdateRequest{
-		Id:        body.Id,
-        OwnerId:   body.OwnerId,
-        PostId:    body.PostId,
-        Text:      body.Text,
+		Id:      body.Id,
+		OwnerId: body.OwnerId,
+		PostId:  body.PostId,
+		Text:    body.Text,
 	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

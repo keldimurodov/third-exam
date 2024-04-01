@@ -5,7 +5,10 @@ type PostComments struct {
 	OwnerId   string `json:"owner_id"`
 	PostId    string `json:"post_id"`
 	Text      string `json:"text"`
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
-	DeletedAt string `json:"deleted_at"`
+}
+
+type PostCommentsRequest struct {
+    OwnerId string `json:"user_id"`
+	PostId  string `json:"post_id"`
+	Text    string `json:"text"`
 }
